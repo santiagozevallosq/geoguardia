@@ -15,32 +15,21 @@
   <div class="hero">
     <div class="brand"><div class="brand-mark">G</div><div><h1>GeoGuardIA</h1><span>Cloud + IA para vigilancia territorial</span></div></div>
     <div class="hero-main">
-      <div class="eyebrow">Proyecto académico · Maestría en IA</div>
+      <div class="eyebrow">Gestión del Riesgo de Desastres</div>
       <h2>Monitoreo inteligente de quebradas para apoyar decisiones municipales.</h2>
-      <p>Mock institucional de una plataforma de vigilancia periódica con drones, procesamiento geoespacial, inteligencia artificial y validación humana.</p>
-      <div class="students">
-        <div class="students-title">Participantes del proyecto</div>
-        <div class="student-grid">
-          <div class="student">Eddy Santiago Zevallos Quispe</div>
-          <div class="student">Antony Alcantara Tamayo</div>
-          <div class="student">Héctor Enrique López Mariluz</div>
-          <div class="student">Lizzie Pérez Torres</div>
-          <div class="student">Jonathan Jurado Sandoval</div>
-        </div>
-      </div>
+      <p>Plataforma de vigilancia periódica con drones, procesamiento geoespacial, inteligencia artificial y validación humana.</p>
     </div>
-    <div class="hero-foot">Curso: IoT y Soluciones Cloud · Semestre 2026-2 · Proyecto GeoGuardIA</div>
+    <div class="hero-foot">GeoGuardIA © 2026 · Municipalidad Distrital de Lurigancho-Chosica</div>
   </div>
   <div class="login-panel">
     <form id="loginForm" class="login-card">
       <div class="seal">M</div>
       <h3>Acceso institucional</h3>
       <p>Municipalidad Distrital de Lurigancho-Chosica · Centro de Operaciones de Emergencia Local</p>
-      <label>Usuario<input id="user" value="muni" autocomplete="username"></label>
-      <label>Contraseña<input id="pass" type="password" value="muni" autocomplete="current-password"></label>
+      <label>Usuario<input id="user" placeholder="Usuario" autocomplete="username"></label>
+      <label>Contraseña<input id="pass" type="password" placeholder="Contraseña" autocomplete="current-password"></label>
       <button class="primary full" type="submit">Ingresar a GeoGuardIA</button>
       <div id="loginError" class="error">Usuario o contraseña incorrectos.</div>
-      <div class="demo-note"><b>Acceso demo:</b> usuario <b>muni</b> · contraseña <b>muni</b>. El login es una capa visual del prototipo.</div>
     </form>
   </div>
 </section>
@@ -72,7 +61,7 @@
     </header>
     <div class="content">
       <section id="inicio" class="page active">
-        <div class="page-head"><div><h2>Centro de Monitoreo Territorial</h2><p>Estado operativo consolidado · actualización simulada al 05 oct. 2026, 15:42</p></div><button class="secondary" onclick="toast('Datos del mock actualizados')">Actualizar</button></div>
+        <div class="page-head"><div><h2>Centro de Monitoreo Territorial</h2><p>Estado operativo consolidado · última actualización: 05 oct. 2026, 15:42</p></div><button class="secondary" onclick="toast('Datos actualizados')">Actualizar</button></div>
         <div id="kpis" class="grid-kpi"></div>
         <div class="dashboard-grid">
           <div class="card"><div class="card-head"><h3>Mapa operativo del distrito</h3><div class="legend"><span><i class="dot green"></i>Normal</span><span><i class="dot yellow"></i>Observación</span><span><i class="dot orange"></i>Alta</span><span><i class="dot red"></i>Emergencia</span></div></div><div id="homeMap" class="map"></div></div>
@@ -80,7 +69,7 @@
         </div>
       </section>
 
-      <section id="mapa" class="page"><div class="page-head"><div><h2>Mapa territorial</h2><p>Visor SIG simulado con capas operativas de quebradas, tramos, obras y hallazgos.</p></div></div><div class="two-col"><div class="card"><div class="card-head"><h3>Visor geoespacial</h3><span>WGS84 · Mock cartográfico</span></div><div id="mainMap" class="map tall"></div></div><div class="card"><div class="card-head"><h3>Capas</h3><span>11 disponibles</span></div><div id="layerList" class="card-body layer-list"></div></div></div></section>
+      <section id="mapa" class="page"><div class="page-head"><div><h2>Mapa territorial</h2><p>Visor SIG con capas operativas de quebradas, tramos, obras y hallazgos.</p></div></div><div class="two-col"><div class="card"><div class="card-head"><h3>Visor geoespacial</h3><span>WGS84 · Base cartográfica</span></div><div id="mainMap" class="map tall"></div></div><div class="card"><div class="card-head"><h3>Capas</h3><span>11 disponibles</span></div><div id="layerList" class="card-body layer-list"></div></div></div></section>
 
       <section id="quebradas" class="page"><div class="page-head"><div><h2>Quebradas monitoreadas</h2><p>Inventario operativo y estado consolidado del piloto distrital.</p></div></div><div class="card"><div class="card-body"><div class="filters"><input placeholder="Buscar quebrada..."><select><option>Todos los estados</option><option>Normal</option><option>Observación</option><option>Alta prioridad</option></select></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Quebrada</th><th>Estado</th><th>Último vuelo</th><th>Hallazgos</th><th>Tramos</th><th>Prioridad</th></tr></thead><tbody id="qBody"></tbody></table></div></div></div></section>
 
@@ -94,11 +83,11 @@
 
       <section id="analitica" class="page"><div class="page-head"><div><h2>Analítica del piloto</h2><p>Indicadores de calidad, oportunidad, utilidad y desempeño del sistema.</p></div></div><div id="analyticsKpis" class="grid-kpi"></div><div class="two-col"><div class="card"><div class="card-head"><h3>Hallazgos por campaña</h3></div><div class="card-body"><div class="bars" id="bars"></div></div></div><div class="card"><div class="card-head"><h3>Distribución por tipo</h3></div><div class="card-body"><div class="type-list"><p>Sedimentos <b>12</b></p><p>Elevación <b>8</b></p><p>Bloques <b>6</b></p><p>Grietas <b>5</b></p><p>Represamiento <b>3</b></p><p>Sección de cauce <b>3</b></p></div></div></div></div></section>
 
-      <section id="reportes" class="page"><div class="page-head"><div><h2>Reportes</h2><p>Productos simulados para gestión municipal y seguimiento.</p></div></div><div class="report-grid"><div class="report card"><h3>Reporte ejecutivo COEL</h3><p>Estado consolidado, alertas, intervenciones y próximos hitos.</p><button class="secondary" onclick="toast('Reporte ejecutivo generado')">Generar PDF</button></div><div class="report card"><h3>Reporte de quebrada</h3><p>Campañas, cambios, obras, hallazgos e historial.</p><button class="secondary" onclick="toast('Reporte de quebrada generado')">Generar PDF</button></div><div class="report card"><h3>Reporte de intervenciones</h3><p>Acciones, responsables, plazos y estado.</p><button class="secondary" onclick="toast('Reporte generado')">Generar PDF</button></div></div></section>
+      <section id="reportes" class="page"><div class="page-head"><div><h2>Reportes</h2><p>Productos para gestión municipal y seguimiento.</p></div></div><div class="report-grid"><div class="report card"><h3>Reporte ejecutivo COEL</h3><p>Estado consolidado, alertas, intervenciones y próximos hitos.</p><button class="secondary" onclick="toast('Reporte ejecutivo generado')">Generar PDF</button></div><div class="report card"><h3>Reporte de quebrada</h3><p>Campañas, cambios, obras, hallazgos e historial.</p><button class="secondary" onclick="toast('Reporte de quebrada generado')">Generar PDF</button></div><div class="report card"><h3>Reporte de intervenciones</h3><p>Acciones, responsables, plazos y estado.</p><button class="secondary" onclick="toast('Reporte generado')">Generar PDF</button></div></div></section>
 
-      <section id="historial" class="page"><div class="page-head"><div><h2>Historial y trazabilidad</h2><p>Registro simulado de campañas, validaciones, decisiones y responsables.</p></div></div><div class="card"><div class="card-body timeline"><p><b>15:42 · Usuario muni inició sesión</b><small>Rol COEL · sesión de demostración</small></p><p><b>13:10 · INT-026 asignada</b><small>Gestión del Riesgo · GG-014</small></p><p><b>12:40 · INT-026 creada</b><small>Inspección física prioritaria</small></p><p><b>12:22 · GG-014 validado</b><small>Especialista técnico</small></p><p><b>11:50 · CAM-026 procesada</b><small>Modelo geoguardia-change-v1.4</small></p></div></div></section>
+      <section id="historial" class="page"><div class="page-head"><div><h2>Historial y trazabilidad</h2><p>Registro de campañas, validaciones, decisiones y responsables.</p></div></div><div class="card"><div class="card-body timeline"><p><b>15:42 · Usuario muni inició sesión</b><small>Rol COEL · Gestión del Riesgo</small></p><p><b>13:10 · INT-026 asignada</b><small>Gestión del Riesgo · GG-014</small></p><p><b>12:40 · INT-026 creada</b><small>Inspección física prioritaria</small></p><p><b>12:22 · GG-014 validado</b><small>Especialista técnico</small></p><p><b>11:50 · CAM-026 procesada</b><small>Modelo geoguardia-change-v1.4</small></p></div></div></section>
 
-      <section id="sistema" class="page"><div class="page-head"><div><h2>Estado del sistema</h2><p>Vista operativa simulada de servicios cloud, datos y modelos.</p></div><span class="status-pill">Sin incidencias</span></div><div class="health-grid"><div>Amazon S3 <span>Operativo</span></div><div>Batch / ODM <span>Operativo</span></div><div>SageMaker <span>Operativo</span></div><div>PostGIS <span>Operativo</span></div><div>Cognito / IAM <span>Operativo</span></div><div>SNS <span>Operativo</span></div></div><div class="card mt"><div class="card-head"><h3>Gobernanza de la decisión</h3></div><div class="card-body governance"><div><b>IA propone</b><small>Hallazgos preliminares</small></div><div>→</div><div><b>Especialista valida</b><small>Aprueba o descarta</small></div><div>→</div><div><b>Municipalidad decide</b><small>Prioriza y comunica</small></div></div></div></section>
+      <section id="sistema" class="page"><div class="page-head"><div><h2>Estado del sistema</h2><p>Vista operativa de servicios cloud, datos y modelos.</p></div><span class="status-pill">Sin incidencias</span></div><div class="health-grid"><div>Amazon S3 <span>Operativo</span></div><div>Batch / ODM <span>Operativo</span></div><div>SageMaker <span>Operativo</span></div><div>PostGIS <span>Operativo</span></div><div>Cognito / IAM <span>Operativo</span></div><div>SNS <span>Operativo</span></div></div><div class="card mt"><div class="card-head"><h3>Gobernanza de la decisión</h3></div><div class="card-body governance"><div><b>IA propone</b><small>Hallazgos preliminares</small></div><div>→</div><div><b>Especialista valida</b><small>Aprueba o descarta</small></div><div>→</div><div><b>Municipalidad decide</b><small>Prioriza y comunica</small></div></div></div></section>
     </div>
   </main>
 </section>
