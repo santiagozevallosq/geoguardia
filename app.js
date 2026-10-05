@@ -31,6 +31,22 @@ let interventions=[
  ['INT-023','GG-011','Inspección','Defensa Civil','08 Oct','Media','Programada']
 ];
 const colors={green:'#22a06b',yellow:'#d9a315',orange:'#d66b1f',red:'#c83b3b'};
+const heroPhrases=['Monitoreo inteligente de quebradas para apoyar decisiones municipales.','Vigilancia periódica con drones, IA y validación humana.','Datos geoespaciales al servicio de la gestión del riesgo.'];
+function typeLoop(el){
+ if(!el) return;
+ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){el.textContent=heroPhrases[0];return}
+ let p=0,i=0,deleting=false;
+ const tick=()=>{
+  const full=heroPhrases[p];
+  i+=deleting?-1:1;
+  el.textContent=full.slice(0,i);
+  let delay=deleting?28:42;
+  if(!deleting&&i===full.length){deleting=true;delay=1800}
+  else if(deleting&&i===0){deleting=false;p=(p+1)%heroPhrases.length;delay=350}
+  setTimeout(tick,delay);
+ };
+ tick();
+}
 const byName=n=>quebradas.find(q=>q.n===n);
 const badge=(st,label)=>`<span class="badge b-${st}">${label}</span>`;
 
@@ -98,4 +114,5 @@ $$('.switch').forEach((s,i)=>s.addEventListener('click',()=>{
 }));
 
 render();
+typeLoop($('#heroType'));
 if(sessionStorage.getItem('geoguardia')==='1'){ $('#login').classList.add('hidden');$('#app').classList.remove('hidden');setTimeout(()=>homeMap.invalidateSize(),150); }
