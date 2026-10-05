@@ -18,6 +18,12 @@ const findings=[
  ['GG-011','20/09/26','San Antonio','S-07','Sección cauce','yellow','Validado'],
  ['GG-010','16/09/26','La Ronda','L-04','Represamiento','yellow','Seguimiento']
 ];
+const findingOffsets=[[0.0022,0.0019],[-0.0021,0.0026],[0.0026,-0.0018],[0.0020,0.0015],[-0.0024,-0.0014],[0.0016,0.0021],[-0.0019,-0.0024]];
+const obras=[
+ {id:'BD-04',type:'Barrera dinámica',q:'Quirio',st:'orange',dlat:-0.0030,dlng:0.0035},
+ {id:'MC-02',type:'Muro de contención',q:'Pedregal',st:'yellow',dlat:0.0025,dlng:-0.0030},
+ {id:'DQ-03',type:'Dique',q:'Quirio',st:'green',dlat:0.0035,dlng:0.0020}
+];
 let interventions=[
  ['INT-026','GG-014','Inspección física','Gestión del Riesgo','06 Oct','Alta','En curso'],
  ['INT-025','GG-012','Limpieza preventiva','Obras','10 Oct','Media','Programada'],
@@ -25,6 +31,7 @@ let interventions=[
  ['INT-023','GG-011','Inspección','Defensa Civil','08 Oct','Media','Programada']
 ];
 const colors={green:'#22a06b',yellow:'#d9a315',orange:'#d66b1f',red:'#c83b3b'};
+const byName=n=>quebradas.find(q=>q.n===n);
 const badge=(st,label)=>`<span class="badge b-${st}">${label}</span>`;
 
 function render(){
@@ -49,15 +56,46 @@ $$('#nav button[data-page]').forEach(b=>b.addEventListener('click',()=>showPage(
 $('#notifBtn').addEventListener('click',()=>toast('3 notificaciones: GG-014 validado · CAM-026 publicada · INT-026 pendiente'));
 $('#logoutBtn').addEventListener('click',()=>{sessionStorage.removeItem('geoguardia');$('#app').classList.add('hidden');$('#login').classList.remove('hidden');toast('Sesión cerrada')});
 $('#loginForm').addEventListener('submit',e=>{e.preventDefault();const ok=$('#user').value==='muni'&&$('#pass').value==='muni';$('#loginError').classList.toggle('show',!ok);if(ok){sessionStorage.setItem('geoguardia','1');$('#login').classList.add('hidden');$('#app').classList.remove('hidden');setTimeout(()=>homeMap.invalidateSize(),150)}});
-function initMap(el,zoom){
+
+function initMap(el,zoom,withLayers){
  const m=L.map(el).setView([-11.938,-76.700],zoom);
  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(m);
- quebradas.forEach(q=>L.circleMarker([q.lat,q.lng],{radius:q.st==='orange'?10:8,color:'#fff',weight:3,fillColor:colors[q.st],fillOpacity:1}).addTo(m).bindPopup(`<b>${q.n}</b><br>${q.label}<br>${q.hall} hallazgos activos<br><small>Último vuelo: ${q.flight}</small>`));
+ if(!withLayers) quebradas.forEach(q=>L.circleMarker([q.lat,q.lng],{radius:q.st==='orange'?10:8,color:'#fff',weight:3,fillColor:colors[q.st],fillOpacity:1}).addTo(m).bindPopup(`<b>${q.n}</b><br>${q.label}<br>${q.hall} hallazgos activos<br><small>Último vuelo: ${q.flight}</small>`));
  return m;
 }
-const homeMap=initMap('homeMap',13),mainMap=initMap('mainMap',14);
-const layers=['Quebradas','Tramos monitoreados','Hallazgos IA','Obras de protección','Ortomosaico último vuelo','Modelo de elevación','Sedimentos','Bloques de roca','Erosión','Vegetación','Infraestructura expuesta'];
-$('#layerList').innerHTML=layers.map((l,i)=>`<div class="layer"><span>${l}</span><button class="switch ${i<4?'on':''}" aria-label="${l}"></button></div>`).join('');
-$$('.switch').forEach(s=>s.addEventListener('click',()=>{s.classList.toggle('on');toast('Capa actualizada en el visor')}));
+const homeMap=initMap('homeMap',13),mainMap=initMap('mainMap',14,true);
+
+const quebradasLayer=L.layerGroup(quebradas.map(q=>L.circleMarker([q.lat,q.lng],{radius:q.st==='orange'?10:8,color:'#fff',weight:3,fillColor:colors[q.st],fillOpacity:1}).bindPopup(`<b>${q.n}</b><br>${q.label}<br>${q.hall} hallazgos activos<br><small>Último vuelo: ${q.flight}</small>`)));
+const tramosLayer=L.layerGroup(quebradas.map(q=>L.polyline([[q.lat,q.lng],[q.lat+0.006,q.lng+0.004]],{color:colors[q.st],weight:3,opacity:.85}).bindTooltip(`${q.n} · ${q.tramos} tramos monitoreados`)));
+const hallazgosLayer=L.layerGroup(findings.map((h,i)=>{const b=byName(h[2]),[dlat,dlng]=findingOffsets[i];return L.circleMarker([b.lat+dlat,b.lng+dlng],{radius:6,color:'#fff',weight:2,fillColor:colors[h[5]],fillOpacity:1}).bindPopup(`<b>${h[0]}</b><br>${h[4]} · tramo ${h[3]}<br><small>${h[6]}</small>`)}));
+const obrasLayer=L.layerGroup(obras.map(o=>{const b=byName(o.q);return L.circleMarker([b.lat+o.dlat,b.lng+o.dlng],{radius:7,color:'#fff',weight:2,fillColor:colors[o.st],fillOpacity:1}).bindPopup(`<b>${o.id}</b><br>${o.type}<br><small>${o.q}</small>`)}));
+const satLayer=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Esri, Maxar, Earthstar Geographics'});
+const illustrative={'Modelo de elevación':'#7c5cff','Sedimentos':'#b9772e','Bloques de roca':'#6b7280','Erosión':'#c0392b','Vegetación':'#2f9e44','Infraestructura expuesta':'#1864ab'};
+const illustrativeLayers={};
+Object.entries(illustrative).forEach(([name,color])=>{
+ illustrativeLayers[name]=L.layerGroup(quebradas.map(q=>L.circle([q.lat,q.lng],{radius:260,color,weight:1,dashArray:'4,4',fillColor:color,fillOpacity:.18}).bindTooltip('Capa ilustrativa · referencial, pendiente de vuelo real',{sticky:true})));
+});
+
+const layerDefs=[
+ {name:'Quebradas',layer:quebradasLayer,kind:'data'},
+ {name:'Tramos monitoreados',layer:tramosLayer,kind:'data'},
+ {name:'Hallazgos IA',layer:hallazgosLayer,kind:'data'},
+ {name:'Obras de protección',layer:obrasLayer,kind:'data'},
+ {name:'Ortomosaico último vuelo',layer:satLayer,kind:'raster'},
+ {name:'Modelo de elevación',layer:illustrativeLayers['Modelo de elevación'],kind:'illustrative'},
+ {name:'Sedimentos',layer:illustrativeLayers['Sedimentos'],kind:'illustrative'},
+ {name:'Bloques de roca',layer:illustrativeLayers['Bloques de roca'],kind:'illustrative'},
+ {name:'Erosión',layer:illustrativeLayers['Erosión'],kind:'illustrative'},
+ {name:'Vegetación',layer:illustrativeLayers['Vegetación'],kind:'illustrative'},
+ {name:'Infraestructura expuesta',layer:illustrativeLayers['Infraestructura expuesta'],kind:'illustrative'}
+];
+layerDefs.forEach((d,i)=>{if(i<4) d.layer.addTo(mainMap)});
+$('#layerList').innerHTML=layerDefs.map((d,i)=>`<div class="layer"><span>${d.name}${d.kind==='illustrative'?' <em>aprox.</em>':''}</span><button class="switch ${i<4?'on':''}" aria-label="${d.name}"></button></div>`).join('');
+$$('.switch').forEach((s,i)=>s.addEventListener('click',()=>{
+ const on=s.classList.toggle('on'),d=layerDefs[i];
+ if(on) d.layer.addTo(mainMap); else mainMap.removeLayer(d.layer);
+ toast(d.kind==='illustrative'?`${d.name}: capa ilustrativa, referencial (sin vuelo real aún)`:`${d.name} ${on?'activada':'desactivada'} en el visor`);
+}));
+
 render();
 if(sessionStorage.getItem('geoguardia')==='1'){ $('#login').classList.add('hidden');$('#app').classList.remove('hidden');setTimeout(()=>homeMap.invalidateSize(),150); }
